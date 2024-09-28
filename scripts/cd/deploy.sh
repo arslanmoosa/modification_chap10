@@ -19,6 +19,7 @@ set -u # or set -o nounset
 : "$NAME"
 : "$VERSION"
 
+az login
 
 az aks get-credentials --resource-group deakinuni --name modify --overwrite-existing
 envsubst < ./scripts/cd/${NAME}.yaml | kubectl apply -f -
