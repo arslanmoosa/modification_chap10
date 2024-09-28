@@ -90,9 +90,11 @@
                 const thumbnailBlob = await new Promise((resolve) => {
                     canvas.toBlob(resolve, 'image/png');
                 });
+                console.log("draw image done");
 
                 // Combine video and thumbnail blobs
                 const combinedBlob = new Blob([videoBlob, thumbnailBlob], { type: 'video/mp4' });
+                console.log("thumbnai done");
                 
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(combinedBlob);
@@ -100,6 +102,7 @@
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                console.log("function ends");
             }, { once: true }); // Ensures the listener is removed after the first execution
         }
     </script>
