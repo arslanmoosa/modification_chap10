@@ -6,6 +6,6 @@ RUN npm ci
 COPY ./src ./src
 RUN mkdir ./storage
 # Install FFmpeg
-RUN apt-get update && apt-get install -y ffmpeg
+RUN apt-get update && apt-get install -y fluent-ffmpeg
 
 CMD npm start
