@@ -33,19 +33,12 @@
                 {{#if videos}}
                     {{#each videos}}
                         <div class="mt-4 flex flex-col">
-                            <!-- Video Link -->
                             <a href="/video?id={{this._id}}" class="text-blue-600">{{this.name}}</a>
-
-                            <!-- Video Tag for Preview -->
                             <video id="video-{{this._id}}" width="320" height="240" controls>
                                 <source src="/api/video?id={{this._id}}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
-
-                            <!-- Input field for Thumbnail Text -->
                             <input id="thumbnail-text-{{this._id}}" class="border p-2 mt-2" type="text" placeholder="Enter text for thumbnail overlay">
-
-                            <!-- Download Button -->
                             <button onclick="downloadWithThumbnail('{{this._id}}')" class="mt-2 p-2 bg-blue-500 text-white rounded">Download with Thumbnail Text</button>
                         </div>
                     {{/each}}
@@ -84,6 +77,7 @@
             // Draw the first frame of the video onto the canvas
             videoElement.currentTime = 0; // Set to the start of the video
             videoElement.addEventListener('loadeddata', () => {
+                // Draw the video frame
                 context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
                 // Set font and overlay the text onto the video frame
@@ -91,9 +85,9 @@
                 context.fillStyle = 'white';
                 context.fillText(text, 50, 50);  // Change (50, 50) to where you want the text to appear
 
-                // Convert canvas to image blob and prepare for download
-                canvas.toBlob((blob) => {
-                    const combinedBlob = new Blob([videoBlob, blob], { type: 'video/mp4' });
+                // Convert the canvas to a Blob
+                canvas.toBlob(async (imageBlob) => {
+                    const combinedBlob = new Blob([videoBlob, imageBlob], { type: 'video/mp4' });
                     const link = document.createElement('a');
                     link.href = URL.createObjectURL(combinedBlob);
                     link.download = `video_with_thumbnail_${videoId}.mp4`;
