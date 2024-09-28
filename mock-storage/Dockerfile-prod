@@ -1,22 +1,10 @@
 FROM node:18.17.1
 
-# Set working directory
 WORKDIR /usr/src/app
-
-# Copy package.json and package-lock.json
 COPY package*.json ./
+RUN npm install
 
-# Install dependencies including fluent-ffmpeg
-RUN npm ci --omit=dev
-
-# Copy the rest of your application code
 COPY ./src ./src
-
-# Create the storage directory
 RUN mkdir ./storage
 
-# Install FFmpeg using apt-get (system-wide)
-RUN apt-get update && apt-get install -y ffmpeg
-
-# Start the application
 CMD ["npm", "start"]
