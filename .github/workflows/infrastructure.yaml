@@ -1,0 +1,54 @@
+# 
+# GitHub Actions workflow.
+#
+# Deploys RabbitMQ and MongoDB database.
+#
+
+name: Deploy infrastructure
+
+on:
+  #
+  # Allows deployment to be invoked manually through the GitHub Actions user interface.
+  #
+  workflow_dispatch: 
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      
+      # Checks-out your repository under $GITHUB_WORKSPACE.
+      - uses: actions/checkout@v3
+
+      #
+      # Installs Kubectl and connects it to the cluster.
+      #
+      # https://github.com/marketplace/actions/kubernetes-cli-kubectl
+      #
+      # - uses: tale/kubectl-action@v1
+      #   with:
+      #     base64-kube-config: ${{ secrets.KUBE_CONFIG }}
+      #     kubectl-version: v1.24.2
+      - name: Grant execute permissions for infrastructure.sh
+        run: chmod +x ./scripts/cd/infrastructure.sh  
+      - name: az login
+        run: ./scripts/cd/infrastructure.sh
+      - name: Install Kubectl
+        uses: azure/setup-kubectl@v1
+      # 
+      # Deploys MongoDB.
+      #
+      - name: Grant execute permissions for mongodb.yaml
+        run: chmod +x ./scripts/cd/mongodb.yaml     
+      - name: Deploy MongoDB
+        run: kubectl apply -f ./scripts/cd/mongodb.yaml
+
+      # 
+      # Deploys RabbitMQ.
+      #
+      - name: Grant execute permissions for rabbit.yaml
+        run: chmod +x ./scripts/cd/rabbit.yaml      
+      - name: Deploy Rabbit
+        run: kubectl apply -f ./scripts/cd/rabbit.yaml
