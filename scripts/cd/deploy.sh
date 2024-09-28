@@ -27,8 +27,8 @@ echo "waiting 10 seconds for ips generation"
 sleep 10
 
 
-kubectl get pods
-POD_NAME=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | head -n 3)
+# Get the name of the third pod
+POD_NAME=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | sed -n '3p')
 
 # Display the generated pod name
 echo "Generated pod name: $POD_NAME"
@@ -36,5 +36,6 @@ echo "Generated pod name: $POD_NAME"
 # Fetch and display logs of the pod
 echo "Fetching logs for pod: $POD_NAME"
 kubectl logs $POD_NAME
+
 kubectl get deployment
 kubectl get services
