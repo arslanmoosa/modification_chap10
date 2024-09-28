@@ -23,11 +23,11 @@ az login
 
 az aks get-credentials --resource-group deakinuni --name modify --overwrite-existing
 envsubst < ./scripts/cd/${NAME}.yaml | kubectl apply -f -
-echo "waiting 60 seconds for ips generation"
-sleep 20
+echo "waiting 10 seconds for ips generation"
+sleep 10
 
 
-
+kubectl get pods
 POD_NAME=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | head -n 1)
 
 # Display the generated pod name
