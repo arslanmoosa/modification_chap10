@@ -28,7 +28,7 @@ sleep 10
 
 
 kubectl get pods
-POD_NAME=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | head -n 1)
+POD_NAME=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | head -n 3)
 
 # Display the generated pod name
 echo "Generated pod name: $POD_NAME"
