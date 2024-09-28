@@ -11,6 +11,11 @@ const PORT = process.env.PORT;
 const storagePath = path.join(__dirname, "../storage");
 console.log(`Storing files at ${storagePath}.`);
 
+// Ensure the storage directory exists
+if (!fs.existsSync(storagePath)) {
+    fs.mkdirSync(storagePath, { recursive: true });
+}
+
 const app = express();
 
 //
@@ -27,6 +32,12 @@ app.get("/video", (req, res) => {
 //
 app.post("/upload", (req, res) => {
     const videoId = req.headers.id; // Get video ID from request headers
+
+    if (!videoId) {
+        console.error("Missing video ID in request headers.");
+        return res.status(400).send("Missing video ID.");
+    }
+
     const localFilePath = path.join(storagePath, videoId); // Define local file path for storing video
     const fileWriteStream = fs.createWriteStream(localFilePath); // Create writable stream for video file
 
@@ -48,6 +59,7 @@ function overlayTextOnVideo(videoPath, videoId, res) {
     const overlayText = "Your Text Here"; // Text to overlay on the video
 
     console.log(`Overlaying text on video: ${videoPath}`);
+    console.log(`Output video path: ${outputVideoPath}`);
 
     ffmpeg(videoPath)
         .outputOptions([
