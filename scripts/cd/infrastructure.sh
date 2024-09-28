@@ -7,4 +7,4 @@
 #
 
 az login
-az aks get-credentials --resource-group deakinuni --name chp10 --overwrite-existing
+az aks get-credentials --resource-group deakinuni --name modify --overwrite-existing
