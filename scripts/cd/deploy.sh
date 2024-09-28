@@ -26,9 +26,9 @@ envsubst < ./scripts/cd/${NAME}.yaml | kubectl apply -f -
 echo "waiting 10 seconds for ips generation"
 sleep 10
 
-
+kubectl get pods
 # Get the name of the third pod
-POD_NAME=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | sed -n '3p')
+POD_NAME=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | sed -n '5p')
 
 # Display the generated pod name
 echo "Generated pod name: $POD_NAME"
