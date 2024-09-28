@@ -76,7 +76,7 @@
 
             // Draw the first frame of the video onto the canvas
             videoElement.currentTime = 0; // Set to the start of the video
-            videoElement.addEventListener('loadeddata', () => {
+            videoElement.addEventListener('loadeddata', async function() {
                 // Draw the video frame
                 context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
@@ -86,16 +86,20 @@
                 context.fillText(text, 50, 50);  // Change (50, 50) to where you want the text to appear
 
                 // Convert the canvas to a Blob
-                canvas.toBlob(async (imageBlob) => {
-                    const combinedBlob = new Blob([videoBlob, imageBlob], { type: 'video/mp4' });
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(combinedBlob);
-                    link.download = `video_with_thumbnail_${videoId}.mp4`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }, 'image/png');
-            });
+                const thumbnailBlob = await new Promise((resolve) => {
+                    canvas.toBlob(resolve, 'image/png');
+                });
+
+                // Combine video and thumbnail blobs
+                const combinedBlob = new Blob([videoBlob, thumbnailBlob], { type: 'video/mp4' });
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(combinedBlob);
+                link.download = `video_with_thumbnail_${videoId}.mp4`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, { once: true }); // Ensures the listener is removed after the first execution
         }
     </script>
 </body>
