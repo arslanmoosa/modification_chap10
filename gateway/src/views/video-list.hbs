@@ -1,91 +1,89 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-
-        <title>FlixTube: Home</title>
-
-        <link rel="stylesheet" href="css/tailwind.min.css">
-        <link rel="stylesheet" href="css/app.css">
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    </head>
-    <body>
-        <div class="flex flex-col">
-            <div class="border-b-2 bg-gray-100">
-                <div class="nav flex flex-row items-center mt-1 p-2">
-                    <div class="text-xl font-bold">
-                        FlixTube
-                    </div>
-                    <div class="ml-16 border-b-2 border-blue-600">
-                        <a href="/">Videos</a>
-                    </div>
-                    <div class="ml-4">
-                        <a href="/upload">Upload</a>
-                    </div>
-                    <div class="ml-4">
-                        <a href="/history">History</a>
-                    </div>
-                    <div class="ml-4">
-                        <a href="/thumbnail">Thumbnail</a>
-                    </div>
+<head>
+    <meta charset="utf-8">
+    <title>FlixTube: Home</title>
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    <link rel="stylesheet" href="css/app.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="flex flex-col">
+        <div class="border-b-2 bg-gray-100">
+            <div class="nav flex flex-row items-center mt-1 p-2">
+                <div class="text-xl font-bold">FlixTube</div>
+                <div class="ml-16 border-b-2 border-blue-600">
+                    <a href="/">Videos</a>
                 </div>
-            </div>
-
-            <div class="m-4">
-                <h1>Videos</h1>
-                <div id="video-list" class="m-4">
-                    {{#if videos}}
-                        {{#each videos}}
-                            <div class="mt-4 flex flex-col">
-                                <!-- Video Link -->
-                                <a href="/video?id={{this._id}}" class="text-blue-600">{{this.name}}</a>
-
-                                <!-- Video Tag for Preview -->
-                                <video id="video-{{this._id}}" width="320" height="240" controls>
-                                    <source src="/api/video?id={{this._id}}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-
-                                <!-- Input field for Thumbnail Text -->
-                                <input id="thumbnail-text-{{this._id}}" class="border p-2 mt-2" type="text" placeholder="Enter text for thumbnail overlay">
-
-                                <!-- Download Button -->
-                                <button onclick="downloadWithThumbnail('{{this._id}}')" class="mt-2 p-2 bg-blue-500 text-white rounded">Download with Thumbnail Text</button>
-                            </div>
-                        {{/each}}
-                    {{else}}
-                        No videos uploaded yet.
-                    {{/if}}
+                <div class="ml-4">
+                    <a href="/upload">Upload</a>
+                </div>
+                <div class="ml-4">
+                    <a href="/history">History</a>
+                </div>
+                <div class="ml-4">
+                    <a href="/thumbnail">Thumbnail</a>
                 </div>
             </div>
         </div>
 
-        <script>
-            async function downloadWithThumbnail(videoId) {
-                const videoElement = document.getElementById(`video-${videoId}`);
-                const text = document.getElementById(`thumbnail-text-${videoId}`).value;
+        <div class="m-4">
+            <h1>Videos</h1>
+            <div id="video-list" class="m-4">
+                {{#if videos}}
+                    {{#each videos}}
+                        <div class="mt-4 flex flex-col">
+                            <!-- Video Link -->
+                            <a href="/video?id={{this._id}}" class="text-blue-600">{{this.name}}</a>
 
-                // Get video source URL
-                const videoUrl = videoElement.querySelector('source').src;
+                            <!-- Video Tag for Preview -->
+                            <video id="video-{{this._id}}" width="320" height="240" controls>
+                                <source src="/api/video?id={{this._id}}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
 
-                // Fetch the video as a Blob
-                const response = await axios({
-                    url: videoUrl,
-                    method: 'GET',
-                    responseType: 'blob'
-                });
+                            <!-- Input field for Thumbnail Text -->
+                            <input id="thumbnail-text-{{this._id}}" class="border p-2 mt-2" type="text" placeholder="Enter text for thumbnail overlay">
 
-                const videoBlob = new Blob([response.data], { type: 'video/mp4' });
+                            <!-- Download Button -->
+                            <button onclick="downloadWithThumbnail('{{this._id}}')" class="mt-2 p-2 bg-blue-500 text-white rounded">Download with Thumbnail Text</button>
+                        </div>
+                    {{/each}}
+                {{else}}
+                    No videos uploaded yet.
+                {{/if}}
+            </div>
+        </div>
+    </div>
 
-                // Create a canvas to overlay the text on the thumbnail
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
+    <script>
+        async function downloadWithThumbnail(videoId) {
+            const videoElement = document.getElementById(`video-${videoId}`);
+            const text = document.getElementById(`thumbnail-text-${videoId}`).value;
 
-                // Set canvas size equal to video size
-                canvas.width = videoElement.videoWidth;
-                canvas.height = videoElement.videoHeight;
+            // Get video source URL
+            const videoUrl = videoElement.querySelector('source').src;
 
-                // Draw the first frame of the video onto the canvas
+            // Fetch the video as a Blob
+            const response = await axios({
+                url: videoUrl,
+                method: 'GET',
+                responseType: 'blob'
+            });
+
+            const videoBlob = new Blob([response.data], { type: 'video/mp4' });
+
+            // Create a canvas to overlay the text on the thumbnail
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            // Set canvas size equal to video size
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+
+            // Draw the first frame of the video onto the canvas
+            videoElement.currentTime = 0; // Set to the start of the video
+            videoElement.addEventListener('loadeddata', () => {
                 context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
                 // Set font and overlay the text onto the video frame
@@ -93,16 +91,18 @@
                 context.fillStyle = 'white';
                 context.fillText(text, 50, 50);  // Change (50, 50) to where you want the text to appear
 
-                // Convert canvas to image blob
-                canvas.toBlob(async (blob) => {
+                // Convert canvas to image blob and prepare for download
+                canvas.toBlob((blob) => {
+                    const combinedBlob = new Blob([videoBlob, blob], { type: 'video/mp4' });
                     const link = document.createElement('a');
-                    link.href = URL.createObjectURL(videoBlob);
-                    link.download = `video_${videoId}.mp4`;
+                    link.href = URL.createObjectURL(combinedBlob);
+                    link.download = `video_with_thumbnail_${videoId}.mp4`;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
                 }, 'image/png');
-            }
-        </script>
-    </body>
+            });
+        }
+    </script>
+</body>
 </html>
