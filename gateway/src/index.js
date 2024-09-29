@@ -26,7 +26,7 @@ async function main() {
     // Main web page that lists videos.
     //
     app.get("/", async (req, res) => {
-        // Retreives the list of videos from the metadata microservice.
+        // Retrieves the list of videos from the metadata microservice.
         const videosResponse = await axios.get("http://metadata/videos");
         // Renders the video list for display in the browser.
         res.render("video-list", { videos: videosResponse.data.videos });
@@ -37,7 +37,7 @@ async function main() {
     //
     app.get("/video", async (req, res) => {
         const videoId = req.query.id;
-        // Retreives the data from the metadata microservice.
+        // Retrieves the data from the metadata microservice.
         const videoResponse = await axios.get(`http://metadata/video?id=${videoId}`);
         const video = {
             metadata: videoResponse.data.video,
@@ -55,10 +55,10 @@ async function main() {
     });
 
     //
-    // Web page to show the users viewing history.
+    // Web page to show the user's viewing history.
     //
     app.get("/history", async (req, res) => {
-        // Retreives the data from the history microservice.
+        // Retrieves the data from the history microservice.
         const historyResponse = await axios.get("http://history/history");
         // Renders the history for display in the browser.
         res.render("history", { videos: historyResponse.data.history });
@@ -71,7 +71,6 @@ async function main() {
         const response = await axios({
             method: "GET",
             url: `http://video-streaming/video?id=${req.query.id}`, 
-            data: req, 
             responseType: "stream",
         });
         response.data.pipe(res);
@@ -81,7 +80,7 @@ async function main() {
     // HTTP POST route to upload video from the user's browser with a thumbnail.
     //
     app.post("/api/upload", async (req, res) => {
-        const fileName = req.headers["File-Name"];
+        const fileName = req.headers["file-name"]; // Lowercase for consistency
         const tempFilePath = path.join(os.tmpdir(), fileName); // Temporary path for the uploaded file
         const videoWriteStream = fs.createWriteStream(tempFilePath);
 
@@ -115,7 +114,7 @@ async function main() {
                                 url: "http://video-upload/upload", 
                                 data: fileStream,
                                 headers: {
-                                    "Content-Type": req.headers["Content-Type"],
+                                    "Content-Type": req.headers["content-type"], // Fixed to lowercase
                                     "File-Name": fileName,
                                 },
                             });
