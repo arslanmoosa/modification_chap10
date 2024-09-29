@@ -11,37 +11,94 @@
     <!-- Include Tailwind CSS -->
     <link rel="stylesheet" href="css/tailwind.min.css">
     <link rel="stylesheet" href="css/app.css">
-
+    
     <!-- Video.js JavaScript -->
     <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
     <!-- HLS.js for HLS streaming -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <style>
+        .nav a {
+            color: #4a4a4a;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .nav a:hover {
+            background-color: #f1f1f1;
+        }
+        .nav a.active {
+            border-bottom: 3px solid #1e3a8a;
+            color: #1e3a8a;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .video-container {
+            max-width: 960px;
+            margin: 0 auto;
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .resolution-select {
+            appearance: none;
+            padding: 10px;
+            background-color: #f1f5f9;
+            border: 2px solid #2563eb;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #1f2937;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .resolution-select:hover {
+            border-color: #1e40af;
+        }
+    </style>
 </head>
-<body>
-    <div class="flex flex-col">
-        <div class="border-b-2 bg-gray-100">
-            <div class="nav flex flex-row items-center mt-1 p-2">
-                <div class="text-xl font-bold">FlixTube</div>
-                <div class="ml-16"><a href="/">Videos</a></div>
-                <div class="ml-4"><a href="/upload">Upload</a></div>
-                <div class="ml-4"><a href="/history">History</a></div>
+<body class="bg-gray-50">
+    <div class="flex flex-col min-h-screen">
+        <!-- Navigation Bar -->
+        <div class="border-b bg-gray-100 shadow-md">
+            <div class="nav flex flex-row items-center py-4 px-8">
+                <div class="text-2xl font-bold text-blue-800">FlixTube</div>
+                <div class="ml-16">
+                    <a href="/" class="hover:text-blue-600 active">Videos</a>
+                </div>
+                <div class="ml-4">
+                    <a href="/upload" class="hover:text-blue-600">Upload</a>
+                </div>
+                <div class="ml-4">
+                    <a href="/history" class="hover:text-blue-600">History</a>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="m-4">
-        <h1>Playing {{video.metadata.name}}</h1>
-        <div class="m-4">
-            <video id="my-video" class="video-js" controls autoplay muted poster="https://media.geeksforgeeks.org/wp-content/cdn-uploads/20190710102234/download3.png" width="640" height="360">
-                <source src="{{video.url}}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+        <!-- Video Player Section -->
+        <div class="container mx-auto py-8">
+            <div class="video-container">
+                <h1>Playing {{video.metadata.name}}</h1>
+                <div class="my-4">
+                    <video id="my-video" class="video-js vjs-big-play-centered" controls autoplay muted poster="https://media.geeksforgeeks.org/wp-content/cdn-uploads/20190710102234/download3.png" width="960" height="540">
+                        <source src="{{video.url}}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="mt-4">
+                    <label for="resolution-select" class="block mb-2 text-gray-600 font-semibold">Select Resolution:</label>
+                    <select id="resolution-select" class="resolution-select">
+                        <option value="low">Low (360p)</option>
+                        <option value="medium">Medium (480p)</option>
+                        <option value="high">High (720p)</option>
+                    </select>
+                </div>
+            </div>
         </div>
-        <select id="resolution-select" class="mt-4">
-            <option value="low">Low (360p)</option>
-            <option value="medium">Medium (480p)</option>
-            <option value="high">High (720p)</option>
-        </select>
     </div>
 
     <script>

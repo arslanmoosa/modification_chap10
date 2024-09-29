@@ -7,37 +7,65 @@
 
         <link rel="stylesheet" href="css/tailwind.min.css">
         <link rel="stylesheet" href="css/app.css">
+        <style>
+            .nav a {
+                color: #4a4a4a;
+                font-weight: 500;
+                padding: 8px 16px;
+                border-radius: 4px;
+                transition: all 0.3s ease;
+            }
+            .nav a:hover {
+                background-color: #f1f1f1;
+            }
+            .nav a.active {
+                border-bottom: 3px solid #1e3a8a;
+                color: #1e3a8a;
+            }
+            #video-list a {
+                color: #2563eb;
+                font-weight: 600;
+                padding: 8px 0;
+                display: block;
+                transition: color 0.3s ease;
+            }
+            #video-list a:hover {
+                color: #1d4ed8;
+            }
+        </style>
     </head>
-    <body>
-        <div class="flex flex-col">
-            <div class="border-b-2 bg-gray-100">
-                <div class="nav flex flex-row items-center mt-1 p-2">
-                    <div class="text-xl font-bold">
+    <body class="bg-gray-50">
+        <div class="flex flex-col min-h-screen">
+            <!-- Navigation Bar -->
+            <div class="border-b bg-gray-100 shadow-md">
+                <div class="nav flex flex-row items-center py-4 px-8">
+                    <div class="text-2xl font-bold text-blue-800">
                         FlixTube
                     </div>
-                    <div class="ml-16 border-b-2 border-blue-600">
-                        <a href="/">Videos</a>
+                    <div class="ml-16">
+                        <a href="/" class="hover:text-blue-600 active">Videos</a>
                     </div>
                     <div class="ml-4">
-                        <a href="/upload">Upload</a>
+                        <a href="/upload" class="hover:text-blue-600">Upload</a>
                     </div>
                     <div class="ml-4">
-                        <a href="/history">History</a>
+                        <a href="/history" class="hover:text-blue-600">History</a>
                     </div>
                 </div>
             </div>
 
-            <div class="m-4">
-                <h1>Videos</h1>
-                <div id="video-list" class="m-4">
+            <!-- Main Content -->
+            <div class="container mx-auto py-8">
+                <h1 class="text-3xl font-semibold text-gray-700 mb-6">Video Gallery</h1>
+                <div id="video-list" class="bg-white shadow-md rounded-lg p-6">
                     {{#if videos}}
                         {{#each videos}}
-                            <div class="mt-1">
-                                <a href="/video?id={{this._id}}">{{this.name}}</a> 
+                            <div class="border-b py-3">
+                                <a href="/video?id={{this._id}}">{{this.name}}</a>
                             </div>
                         {{/each}}
                     {{else}}
-                        No videos uploaded yet.
+                        <div class="text-gray-500">No videos uploaded yet.</div>
                     {{/if}}
                 </div>
             </div>
