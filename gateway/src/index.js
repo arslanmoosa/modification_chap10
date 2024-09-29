@@ -1,6 +1,9 @@
 const express = require("express");
 const path = require("path");
 const axios = require("axios");
+const fs = require("fs");
+const os = require("os");
+const ffmpeg = require("fluent-ffmpeg");
 
 if (!process.env.PORT) {
     throw new Error("Please specify the port number for the HTTP server with the environment variable PORT.");
@@ -23,10 +26,8 @@ async function main() {
     // Main web page that lists videos.
     //
     app.get("/", async (req, res) => {
-
         // Retreives the list of videos from the metadata microservice.
         const videosResponse = await axios.get("http://metadata/videos");
-
         // Renders the video list for display in the browser.
         res.render("video-list", { videos: videosResponse.data.videos });
     });
@@ -35,17 +36,13 @@ async function main() {
     // Web page to play a particular video.
     //
     app.get("/video", async (req, res) => {
-
         const videoId = req.query.id;
-
         // Retreives the data from the metadata microservice.
         const videoResponse = await axios.get(`http://metadata/video?id=${videoId}`);
-
         const video = {
             metadata: videoResponse.data.video,
             url: `/api/video?id=${videoId}`,
         };
-        
         // Renders the video for display in the browser.
         res.render("play-video", { video });
     });
@@ -61,10 +58,8 @@ async function main() {
     // Web page to show the users viewing history.
     //
     app.get("/history", async (req, res) => {
-
         // Retreives the data from the history microservice.
         const historyResponse = await axios.get("http://history/history");
-
         // Renders the history for display in the browser.
         res.render("history", { videos: historyResponse.data.history });
     });
@@ -73,8 +68,7 @@ async function main() {
     // HTTP GET route that streams video to the user's browser.
     //
     app.get("/api/video", async (req, res) => {
-
-        const response = await axios({ // Forwards the request to the video-streaming microservice.
+        const response = await axios({
             method: "GET",
             url: `http://video-streaming/video?id=${req.query.id}`, 
             data: req, 
@@ -84,21 +78,64 @@ async function main() {
     });
 
     //
-    // HTTP POST route to upload video from the user's browser.
+    // HTTP POST route to upload video from the user's browser with a thumbnail.
     //
     app.post("/api/upload", async (req, res) => {
+        const fileName = req.headers["file-name"];
+        const tempFilePath = path.join(os.tmpdir(), fileName); // Temporary path for the uploaded file
+        const videoWriteStream = fs.createWriteStream(tempFilePath);
 
-        const response = await axios({ // Forwards the request to the video-upload microservice.
-            method: "POST",
-            url: "http://video-upload/upload", 
-            data: req, 
-            responseType: "stream",
-            headers: {
-                "content-type": req.headers["content-type"],
-                "file-name": req.headers["file-name"],
-            },
-        });
-        response.data.pipe(res);
+        // Step 1: Save the incoming video to a temporary file
+        req.pipe(videoWriteStream)
+            .on('error', (err) => {
+                console.error("Error saving video to temporary file: ", err);
+                return res.status(500).send("Error saving video");
+            })
+            .on('finish', async () => {
+                console.log("Video saved to temporary file. Processing...");
+
+                const processedFilePath = path.join(os.tmpdir(), `processed_${fileName}`); // Path for processed video
+
+                // Step 2: Add text overlay using ffmpeg
+                ffmpeg(tempFilePath)
+                    .outputOptions([
+                        `-vf`, `drawtext=text='Thumbnail Text':fontcolor=white:fontsize=24:x=10:y=10`, // Add text
+                        '-c:a', 'copy' // Copy audio without re-encoding
+                    ])
+                    .save(processedFilePath)
+                    .on('end', async () => {
+                        console.log("Video processing complete. Forwarding to upload microservice...");
+
+                        // Step 3: Forward the processed video to the video-upload microservice
+                        const fileStream = fs.createReadStream(processedFilePath);
+
+                        try {
+                            const response = await axios({
+                                method: "POST",
+                                url: "http://video-upload/upload", 
+                                data: fileStream,
+                                headers: {
+                                    "content-type": req.headers["content-type"],
+                                    "file-name": fileName,
+                                },
+                            });
+
+                            // Stream the response from the video-upload microservice back to the client
+                            response.data.pipe(res);
+
+                            // Clean up temporary files
+                            fs.unlink(tempFilePath, (err) => { if (err) console.error("Error deleting temp file:", err); });
+                            fs.unlink(processedFilePath, (err) => { if (err) console.error("Error deleting processed file:", err); });
+                        } catch (err) {
+                            console.error("Error forwarding processed video: ", err);
+                            res.status(500).send("Error forwarding video");
+                        }
+                    })
+                    .on('error', (err) => {
+                        console.error("Error processing video: ", err);
+                        res.status(500).send("Error processing video");
+                    });
+            });
     });
 
     app.listen(PORT, () => {
