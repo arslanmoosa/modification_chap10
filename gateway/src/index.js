@@ -83,6 +83,7 @@ async function main() {
         const fileName = req.headers["file-name"]; // Lowercase for consistency
         const tempFilePath = path.join(os.tmpdir(), fileName); // Temporary path for the uploaded file
         const videoWriteStream = fs.createWriteStream(tempFilePath);
+        console.log("HI");
 
         // Step 1: Save the incoming video to a temporary file
         req.pipe(videoWriteStream)
