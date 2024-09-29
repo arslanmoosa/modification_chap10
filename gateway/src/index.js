@@ -115,8 +115,8 @@ async function main() {
                                 url: "http://video-upload/upload", 
                                 data: fileStream,
                                 headers: {
-                                    "Content-Type": req.headers["content-type"], // Fixed to lowercase
-                                    "File-Name": fileName,
+                                    "content-type": req.headers["content-type"], // Fixed to lowercase
+                                    "file-name": fileName,
                                 },
                             });
 
