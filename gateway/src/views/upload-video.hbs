@@ -3,48 +3,192 @@
     <head>
         <meta charset="utf-8">
 
-        <title>FlixTube: Upload video</title>
+        <title>FlixTube: Upload Video</title>
 
         <link rel="stylesheet" href="css/tailwind.min.css">
         <link rel="stylesheet" href="css/app.css">
+        <style>
+            .nav a {
+                color: #4a4a4a;
+                font-weight: 500;
+                padding: 8px 16px;
+                border-radius: 4px;
+                transition: all 0.3s ease;
+            }
+            .nav a:hover {
+                background-color: #f1f1f1;
+            }
+            .nav a.active {
+                border-bottom: 3px solid #1e3a8a;
+                color: #1e3a8a;
+            }
+            .upload-form {
+                background-color: #f9fafb;
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid #e5e7eb;
+            }
+            #uploadInput {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                border: 2px solid #1e3a8a;
+                border-radius: 6px;
+                background-color: #f1f5f9;
+                cursor: pointer;
+                font-size: 16px;
+                color: #374151;
+                transition: border-color 0.2s ease-in-out;
+            }
+            #uploadInput:hover {
+                border-color: #2563eb;
+            }
+            #results {
+                padding: 16px;
+                background-color: #f1f5f9;
+                border-radius: 8px;
+                margin-top: 12px;
+                border: 1px solid #e5e7eb;
+            }
+        </style>
     </head>
-    <body>
+    <body class="bg-gray-50">
         <script src="js/upload.js"></script>
 
-        <div class="flex flex-col">
-            <div class="border-b-2 bg-gray-100">
-                <div class="nav flex flex-row items-center mt-1 p-2">
-                    <div class="text-xl font-bold">
+        <div class="flex flex-col min-h-screen">
+            <div class="border-b bg-gray-100 shadow-md">
+                <div class="nav flex flex-row items-center py-4 px-8">
+                    <div class="text-2xl font-bold text-blue-800">
                         FlixTube
                     </div>
                     <div class="ml-16">
-                        <a href="/">Videos</a>
-                    </div>
-                    <div class="ml-4 border-b-2 border-blue-600">
-                        <a href="/upload">Upload</a>
+                        <a href="/" class="hover:text-blue-600">Videos</a>
                     </div>
                     <div class="ml-4">
-                        <a href="/history">History</a>
+                        <a href="/upload" class="hover:text-blue-600 active">Upload</a>
+                    </div>
+                    <div class="ml-4">
+                        <a href="/history" class="hover:text-blue-600">History</a>
                     </div>
                 </div>
             </div>
 
-        <div class="m-4">
-            <h1>Upload videos</h1>
-            <div class="m-4">
-                <form class="upload-form">
-                    <p>Click the button and choose videos to upload.</p>
-                    <input 
-                        class="mt-2"
-                        type="file" 
-                        id="uploadInput" 
-                        accept="video/*" 
-                        onchange="uploadFiles(this.files)"
+            <div class="container mx-auto py-8">
+                <h1 class="text-3xl font-semibold text-gray-700 mb-6">Upload Your Videos</h1>
+                <div class="m-4 p-6 bg-white shadow-md rounded-lg">
+                    <form class="upload-form">
+                        <p class="text-gray-600">Click the button below and choose videos to upload.</p>
+                        <input 
+                            class="mt-4"
+                            type="file" 
+                            id="uploadInput" 
+                            accept="video/*" 
+                            onchange="uploadFiles(this.files)"
                         />
-                </form>
+                    </form>
 
-                <div id="results" class="mt-4">
-                    <div>Uploaded:</div>
+                    <div id="results" class="mt-6">
+                        <div class="text-lg font-semibold text-gray-800">Uploaded Files:</div>
+                        <ul class="list-disc pl-5 text-gray-600"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+
+        <title>FlixTube: Upload Video</title>
+
+        <link rel="stylesheet" href="css/tailwind.min.css">
+        <link rel="stylesheet" href="css/app.css">
+        <style>
+            .nav a {
+                color: #4a4a4a;
+                font-weight: 500;
+                padding: 8px 16px;
+                border-radius: 4px;
+                transition: all 0.3s ease;
+            }
+            .nav a:hover {
+                background-color: #f1f1f1;
+            }
+            .nav a.active {
+                border-bottom: 3px solid #1e3a8a;
+                color: #1e3a8a;
+            }
+            .upload-form {
+                background-color: #f9fafb;
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid #e5e7eb;
+            }
+            #uploadInput {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                border: 2px solid #1e3a8a;
+                border-radius: 6px;
+                background-color: #f1f5f9;
+                cursor: pointer;
+                font-size: 16px;
+                color: #374151;
+                transition: border-color 0.2s ease-in-out;
+            }
+            #uploadInput:hover {
+                border-color: #2563eb;
+            }
+            #results {
+                padding: 16px;
+                background-color: #f1f5f9;
+                border-radius: 8px;
+                margin-top: 12px;
+                border: 1px solid #e5e7eb;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50">
+        <script src="js/upload.js"></script>
+
+        <div class="flex flex-col min-h-screen">
+            <div class="border-b bg-gray-100 shadow-md">
+                <div class="nav flex flex-row items-center py-4 px-8">
+                    <div class="text-2xl font-bold text-blue-800">
+                        FlixTube
+                    </div>
+                    <div class="ml-16">
+                        <a href="/" class="hover:text-blue-600">Videos</a>
+                    </div>
+                    <div class="ml-4">
+                        <a href="/upload" class="hover:text-blue-600 active">Upload</a>
+                    </div>
+                    <div class="ml-4">
+                        <a href="/history" class="hover:text-blue-600">History</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container mx-auto py-8">
+                <h1 class="text-3xl font-semibold text-gray-700 mb-6">Upload Your Videos</h1>
+                <div class="m-4 p-6 bg-white shadow-md rounded-lg">
+                    <form class="upload-form">
+                        <p class="text-gray-600">Click the button below and choose videos to upload.</p>
+                        <input 
+                            class="mt-4"
+                            type="file" 
+                            id="uploadInput" 
+                            accept="video/*" 
+                            onchange="uploadFiles(this.files)"
+                        />
+                    </form>
+
+                    <div id="results" class="mt-6">
+                        <div class="text-lg font-semibold text-gray-800">Uploaded Files:</div>
+                        <ul class="list-disc pl-5 text-gray-600"></ul>
+                    </div>
                 </div>
             </div>
         </div>
