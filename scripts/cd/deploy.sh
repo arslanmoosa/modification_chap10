@@ -20,7 +20,7 @@ set -u # or set -o nounset
 : "$VERSION"
 
 az login
-az aks get-credentials --resource-group deakinuni --name chapter10demo --overwrite-existing
+az aks get-credentials --resource-group deakinuni --name modify --overwrite-existing
 envsubst < ./scripts/cd/${NAME}.yaml | kubectl apply -f -
 echo "waiting 20 seconds for ips generation"
 sleep 20
