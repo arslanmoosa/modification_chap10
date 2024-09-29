@@ -1,53 +1,113 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>FlixTube: History</title>
+    <title>FlixTube: History</title>
 
-        <link rel="stylesheet" href="css/tailwind.min.css">
-        <link rel="stylesheet" href="css/app.css">
-    </head>
-    <body>
-        <div class="flex flex-col">
-            <div class="border-b-2 bg-gray-100">
-                <div class="nav flex flex-row items-center mt-1 p-2">
-                    <div class="text-xl font-bold">
-                        FlixTube
-                    </div>
-                    <div class="ml-16">
-                        <a href="/">Videos</a>
-                    </div>
-                    <div class="ml-4">
-                        <a href="/upload">Upload</a>
-                    </div>
-                    <div class="ml-4 border-b-2 border-blue-600">
-                        <a href="/history">History</a>
-                    </div>
+    <!-- Include Tailwind CSS -->
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    <link rel="stylesheet" href="css/app.css">
+
+    <style>
+        .nav a {
+            color: #4a4a4a;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .nav a:hover {
+            background-color: #f1f1f1;
+        }
+        .nav a.active {
+            border-bottom: 3px solid #1e3a8a;
+            color: #1e3a8a;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+        }
+        th {
+            background-color: #1e3a8a;
+            color: white;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+        }
+        td {
+            border-bottom: 1px solid #e5e7eb;
+        }
+        tr:hover td {
+            background-color: #f1f5f9;
+        }
+        a {
+            color: #1e40af;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex flex-col min-h-screen">
+        <!-- Navigation Bar -->
+        <div class="border-b bg-gray-100 shadow-md">
+            <div class="nav flex flex-row items-center py-4 px-8">
+                <div class="text-2xl font-bold text-blue-800">FlixTube</div>
+                <div class="ml-16">
+                    <a href="/" class="hover:text-blue-600">Videos</a>
                 </div>
-            </div>
-
-            <div class="m-4">
-	            <h1>Viewing history</h1>
-                <div class="m-4">
-                    <table>
-                        <tr>
-                            <th class="border-2 p-1 pl-2 pr-2">Video id</th>
-                            <th class="border-2 p-1 pl-2 pr-2">Date watched</th>
-                        </tr>
-                        {{#each videos}}
-                            <tr class="mt-1">
-                                <td class="border-2 p-1 pl-2 pr-2">
-                                    <a href="/video?id={{this.videoId}}">{{this.videoId}}</a> 
-                                </td>
-                                <td class="border-2 p-1 pl-2 pr-2">
-                                    {{this.watched}}
-                                </td>
-                            </tr>
-                        {{/each}}
-                    </table>
+                <div class="ml-4">
+                    <a href="/upload" class="hover:text-blue-600">Upload</a>
+                </div>
+                <div class="ml-4 border-b-2 border-blue-600">
+                    <a href="/history" class="active">History</a>
                 </div>
             </div>
         </div>
-    </body>
+
+        <!-- History Table -->
+        <div class="container mx-auto py-8 px-4">
+            <h1>Viewing History</h1>
+            <div class="mt-6">
+                <table class="w-full table-auto">
+                    <thead>
+                        <tr>
+                            <th class="border-b-2">Video ID</th>
+                            <th class="border-b-2">Date Watched</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each videos}}
+                        <tr class="hover:bg-gray-100">
+                            <td class="border-b">
+                                <a href="/video?id={{this.videoId}}">{{this.videoId}}</a> 
+                            </td>
+                            <td class="border-b">
+                                {{this.watched}}
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
 </html>
