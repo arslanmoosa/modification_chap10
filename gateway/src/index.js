@@ -81,7 +81,7 @@ async function main() {
     // HTTP POST route to upload video from the user's browser with a thumbnail.
     //
     app.post("/api/upload", async (req, res) => {
-        const fileName = req.headers["file-name"];
+        const fileName = req.headers["File-Name"];
         const tempFilePath = path.join(os.tmpdir(), fileName); // Temporary path for the uploaded file
         const videoWriteStream = fs.createWriteStream(tempFilePath);
 
@@ -115,8 +115,8 @@ async function main() {
                                 url: "http://video-upload/upload", 
                                 data: fileStream,
                                 headers: {
-                                    "content-type": req.headers["content-type"],
-                                    "file-name": fileName,
+                                    "Content-Type": req.headers["Content-Type"],
+                                    "File-Name": fileName,
                                 },
                             });
 
