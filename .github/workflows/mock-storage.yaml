@@ -39,16 +39,13 @@ jobs:
       
       # Checks-out your repository under $GITHUB_WORKSPACE.
       - uses: actions/checkout@v3
-      #installing FFmpeg
-      # - name: Install FFmpeg
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y ffmpeg
+
       #
       # Builds the Docker image.
       #
       - name: Grant execute permissions for build-image.sh
-        run: chmod +x ./scripts/cd/build-image.sh 
+        run: chmod +x ./scripts/cd/build-image.sh
+
       - name: Build
         run: ./scripts/cd/build-image.sh
 
@@ -56,7 +53,7 @@ jobs:
       # Publishes the Docker image to the container registry.
       #
       - name: Grant execute permissions for push-image.sh
-        run: chmod +x ./scripts/cd/push-image.sh 
+        run: chmod +x ./scripts/cd/push-image.sh       
       - name: Publish
         run: ./scripts/cd/push-image.sh
 
@@ -73,9 +70,10 @@ jobs:
       #
       # Expands the configuration template and deploys the microservice.
       #
+
       - name: Install Kubectl
         uses: azure/setup-kubectl@v1
       - name: Grant execute permissions for deploy.sh
-        run: chmod +x ./scripts/cd/deploy.sh 
+        run: chmod +x ./scripts/cd/deploy.sh        
       - name: Deploy
         run: ./scripts/cd/deploy.sh

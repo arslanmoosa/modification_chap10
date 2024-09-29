@@ -65,29 +65,7 @@ async function main() {
         console.log("Microservice online.");
     });
 }
-// Function to overlay text on the video
-function overlayTextOnVideo(videoPath, videoId, res) {
-    const outputVideoPath = path.join(storagePath, `output_${videoId}`); // Define output video path
-    const overlayText = "Your Text Here"; // Text to overlay on the video
 
-    console.log(`Overlaying text on video: ${videoPath}`);
-    console.log(`Output video path: ${outputVideoPath}`);
-
-    ffmpeg(videoPath)
-        .outputOptions([
-            `-vf`, `drawtext=text='${overlayText}':fontcolor=white:fontsize=24:x=10:y=10`, // Overlay text options
-            '-c:a', 'copy' // Copy audio without re-encoding
-        ])
-        .save(outputVideoPath) // Save the output video
-        .on('end', () => {
-            console.log("Text overlay completed successfully.");
-            res.sendStatus(200); // Send success response
-        })
-        .on('error', (err) => {
-            console.error("Error overlaying text: ", err);
-            res.status(500).send("Error overlaying text: " + err.message); // Send error message in response
-        });
-}
 main()
     .catch(err => {
         console.error("Microservice failed to start.");
