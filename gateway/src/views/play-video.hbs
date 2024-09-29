@@ -1,41 +1,94 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>FlixTube: Play video</title>
 
-        <title>FlixTube: Play video</title>
+    <!-- Include Video.js CSS -->
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+    <!-- Include Tailwind CSS -->
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    <link rel="stylesheet" href="css/app.css">
 
-        <link rel="stylesheet" href="css/tailwind.min.css">
-        <link rel="stylesheet" href="css/app.css">
-    </head>
-    <body>
-        <div class="flex flex-col">
-            <div class="border-b-2 bg-gray-100">
-                <div class="nav flex flex-row items-center mt-1 p-2">
-                    <div class="text-xl font-bold">
-                        FlixTube
-                    </div>
-                    <div class="ml-16">
-                        <a href="/">Videos</a>
-                    </div>
-                    <div class="ml-4">
-                        <a href="/upload">Upload</a>
-                    </div>
-                    <div class="ml-4">
-                        <a href="/history">History</a>
-                    </div>
-                </div>
+    <!-- Video.js JavaScript -->
+    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+    <!-- HLS.js for HLS streaming -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+    <div class="flex flex-col">
+        <div class="border-b-2 bg-gray-100">
+            <div class="nav flex flex-row items-center mt-1 p-2">
+                <div class="text-xl font-bold">FlixTube</div>
+                <div class="ml-16"><a href="/">Videos</a></div>
+                <div class="ml-4"><a href="/upload">Upload</a></div>
+                <div class="ml-4"><a href="/history">History</a></div>
             </div>
         </div>
+    </div>
 
+    <div class="m-4">
+        <h1>Playing {{video.metadata.name}}</h1>
         <div class="m-4">
-            <h1>Playing {{video.metadata.name}}</h1>
-            <div class="m-4">
-	            <video controls autoplay muted poster="https://media.geeksforgeeks.org/wp-content/cdn-uploads/20190710102234/download3.png" width="640" height="360">
-	                <source src={{video.url}} type="video/mp4">
-	                Your browser does not support the video tag.
-	            </video>
-            </div>
+            <video id="my-video" class="video-js" controls autoplay muted poster="https://media.geeksforgeeks.org/wp-content/cdn-uploads/20190710102234/download3.png" width="640" height="360">
+                <source src="{{video.url}}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
         </div>
-    </body>
+        <select id="resolution-select" class="mt-4">
+            <option value="low">Low (360p)</option>
+            <option value="medium">Medium (480p)</option>
+            <option value="high">High (720p)</option>
+        </select>
+    </div>
+
+    <script>
+        var player = videojs('my-video');
+
+        // Define resolution sources
+        var resolutions = {
+            low: 'low-resolution-video.mp4',
+            medium: 'medium-resolution-video.mp4',
+            high: 'high-resolution-video.mp4'
+        };
+
+        // Change source based on resolution selection
+        document.getElementById('resolution-select').addEventListener('change', function() {
+            var selectedResolution = this.value;
+            player.src({ src: resolutions[selectedResolution], type: 'video/mp4' });
+            player.load(); // Load the new source
+        });
+
+        // For HLS support
+        if (Hls.isSupported()) {
+            var video = document.getElementById('my-video');
+            var hls = new Hls();
+
+            // Use HLS stream URL from video data
+            hls.loadSource('{{video.hlsUrl}}'); 
+            hls.attachMedia(video);
+
+            hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                const availableLevels = hls.levels.map(level => level.height); // Get available levels
+                const restrictedLevels = availableLevels.filter(level => level <= 720); // Limit to 720p
+
+                hls.levels.forEach((level, index) => {
+                    if (!restrictedLevels.includes(level.height)) {
+                        hls.levels.splice(index, 1); // Remove higher resolutions
+                    }
+                });
+
+                hls.currentLevel = 0; // Start with the lowest quality
+            });
+        }
+
+        player.on('dispose', function() {
+            if (hls) {
+                hls.destroy();
+            }
+        });
+    </script>
+</body>
 </html>
